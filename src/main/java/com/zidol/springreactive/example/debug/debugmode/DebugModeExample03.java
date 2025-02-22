@@ -1,4 +1,4 @@
-package com.zidol.springreactive.example.debug;
+package com.zidol.springreactive.example.debug.debugmode;
 
 import com.zidol.springreactive.utils.Logger;
 import reactor.core.publisher.Flux;

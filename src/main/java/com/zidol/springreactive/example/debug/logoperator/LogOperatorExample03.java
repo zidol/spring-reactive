@@ -1,16 +1,17 @@
-package com.zidol.springreactive.example.debug;
+package com.zidol.springreactive.example.debug.logoperator;
 
 import com.zidol.springreactive.utils.Logger;
+import com.zidol.springreactive.utils.TimeUtils;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.Hooks;
+import reactor.core.scheduler.Schedulers;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * onOperatorDebug() Hook 메서드를 이용한 Debug mode 예제
+ * log() operator Custom Category 를 사용하는 예제
  */
-public class DebugModeExample04 {
+public class LogOperatorExample03 {
     public static Map<String, String> fruits = new HashMap<>();
 
     static {
@@ -21,13 +22,18 @@ public class DebugModeExample04 {
     }
 
     public static void main(String[] args) {
-        Hooks.onOperatorDebug();
-
         Flux.fromArray(new String[]{"BANANAS", "APPLES", "PEARS", "MELONS"})
+                .subscribeOn(Schedulers.boundedElastic())
+                .log("Fruit.Source")
+                .publishOn(Schedulers.parallel())
                 .map(String::toLowerCase)
+                .log("Fruit.Lower")
                 .map(fruit -> fruit.substring(0, fruit.length() - 1))
+                .log("Fruit.Substring")
                 .map(fruits::get)
-                .map(translated -> "맛있는 " + translated)
+                .log("Fruit.Name")
                 .subscribe(Logger::onNext, Logger::onError);
+
+        TimeUtils.sleep(100L);
     }
 }
